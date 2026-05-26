@@ -1,15 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
 export default function PrintTrigger() {
-  useEffect(() => {
-    const t = setTimeout(() => {
-      window.print();
-    }, 300);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
     <div className="print-toolbar">
       <button onClick={() => window.print()} className="print-btn">
@@ -18,6 +9,9 @@ export default function PrintTrigger() {
       <a href="/history" className="print-link">
         ← Înapoi la istoric
       </a>
+      <span className="print-hint">
+        Apasă butonul, apoi alege „Save as PDF" în destinație.
+      </span>
     </div>
   );
 }

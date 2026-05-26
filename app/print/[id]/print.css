@@ -1,5 +1,14 @@
 /* Print layout — clean, A4-friendly, browser print → Save as PDF */
 
+/* The /print pages share the global layout with the app, but we want a clean
+   white background and no gradient when viewing or printing. */
+body {
+  background: white !important;
+  background-image: none !important;
+  min-height: 0 !important;
+  color: #0f172a !important;
+}
+
 .page {
   max-width: 800px;
   margin: 0 auto;
@@ -186,17 +195,21 @@
 
 /* Top toolbar shown only on screen — hidden when printing */
 .print-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 10;
   background: white;
   border-bottom: 1px solid #e2e8f0;
-  padding: 10px 32px;
+  padding: 12px 32px;
   display: flex;
   gap: 12px;
   align-items: center;
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0 auto 8px;
+  flex-wrap: wrap;
+}
+
+.print-hint {
+  font-size: 12px;
+  color: #64748b;
+  margin-left: auto;
 }
 
 .print-btn {
@@ -226,19 +239,26 @@
 }
 
 @media print {
-  body {
+  html, body {
     background: white !important;
+    background-image: none !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
-  .print-toolbar {
-    display: none !important;
-  }
+  .print-toolbar { display: none !important; }
   .page {
-    padding: 0;
-    max-width: none;
+    padding: 0 !important;
+    max-width: none !important;
+    margin: 0 !important;
     font-size: 11px;
+    color: #0f172a !important;
+    background: white !important;
   }
   .section { margin-bottom: 8px; }
   .grid { gap: 2px 16px; }
+  .title { color: #0f172a !important; }
+  .section-title, .block-title { color: #0f172a !important; }
   @page {
     size: A4;
     margin: 14mm 16mm;
