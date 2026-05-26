@@ -138,7 +138,7 @@ async function main() {
   let report = [];
   let replaced = 0;
 
-  const newXml = docXml.replace(/<w:t([^>]*)>([^<]*)<\/w:t>/g, (whole, attrs, body) => {
+  let newXml = docXml.replace(/<w:t([^>]*)>([^<]*)<\/w:t>/g, (whole, attrs, body) => {
     const text = decodeXml(body);
     for (const rule of RULES) {
       if (rule.onceOnly && used.has(rule.onceOnly)) continue;
@@ -169,10 +169,36 @@ async function main() {
     return whole;
   });
 
+  // Replace the original right-shifted "Medic examinator:" paragraph with a
+  // clean centered version. The original used trailing whitespace + a negative
+  // `w:ind w:end` to push the line to the right; here we want both the doctor
+  // name and the title centered as a stacked block.
+  const cleanMedicParagraph =
+    "<w:p>" +
+      "<w:pPr>" +
+        '<w:pStyle w:val="Normal"/>' +
+        '<w:jc w:val="center"/>' +
+        "<w:rPr></w:rPr>" +
+      "</w:pPr>" +
+      "<w:r>" +
+        "<w:rPr>" +
+          '<w:rFonts w:cs="Calibri" w:ascii="Calibri" w:hAnsi="Calibri"/>' +
+          "<w:b/>" +
+          '<w:lang w:val="ro-RO"/>' +
+        "</w:rPr>" +
+        "<w:t>Medic examinator: {medic_examinator}</w:t>" +
+      "</w:r>" +
+    "</w:p>";
+  {
+    const phIdx = newXml.indexOf("{medic_examinator}");
+    const pStart = newXml.lastIndexOf("<w:p>", phIdx);
+    const pEnd = newXml.indexOf("</w:p>", phIdx) + "</w:p>".length;
+    newXml = newXml.slice(0, pStart) + cleanMedicParagraph + newXml.slice(pEnd);
+    report.push("✓ medic_examinator paragraph re-centered");
+  }
+
   // Inject a new centered, bold paragraph below the "Medic examinator:" line
-  // for the doctor's title. Going through a fresh <w:p> (rather than a linebreak
-  // inside the existing run) sidesteps the trailing-whitespace alignment quirks
-  // of the original run.
+  // for the doctor's title.
   const titluParagraph =
     "<w:p>" +
       "<w:pPr>" +

@@ -169,7 +169,7 @@
   margin-top: 32px;
   padding-top: 16px;
   border-top: 1px solid #cbd5e1;
-  text-align: right;
+  text-align: center;
   break-inside: avoid;
 }
 
@@ -179,7 +179,6 @@
 }
 
 .medic-titlu {
-  text-align: center;
   font-weight: 600;
   font-size: 12px;
   margin-top: 4px;
