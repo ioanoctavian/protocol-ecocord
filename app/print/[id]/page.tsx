@@ -64,18 +64,18 @@ export default async function PrintPage({ params }: { params: { id: string } }) 
 
         <Section title="Incidență parasternală">
           <Grid>
-            <Item label="Ao la inel" value={f.ao_inel} unit="cm" ref="2,2-3,7" />
-            <Item label="Ao ascendentă" value={f.ao_ascendenta} unit="cm" ref="2,1-3,4" />
-            <Item label="Deschidere v. Ao" value={f.deschidere_v_ao} unit="cm" ref=">1,6" />
+            <Item label="Ao la inel" value={f.ao_inel} unit="cm" range="2,2-3,7" />
+            <Item label="Ao ascendentă" value={f.ao_ascendenta} unit="cm" range="2,1-3,4" />
+            <Item label="Deschidere v. Ao" value={f.deschidere_v_ao} unit="cm" range=">1,6" />
             <Item label="Aspect v. aortică" value={f.aspect_v_ao} />
-            <Item label="Diam AS" value={f.diam_as} unit="cm" ref="2,7-4,5" />
-            <Item label="Diam VD" value={f.diam_vd} unit="cm" ref="0,9-2,6" />
-            <Item label="SIV" value={f.siv} unit="cm" ref="0,6-1,2" />
+            <Item label="Diam AS" value={f.diam_as} unit="cm" range="2,7-4,5" />
+            <Item label="Diam VD" value={f.diam_vd} unit="cm" range="0,9-2,6" />
+            <Item label="SIV" value={f.siv} unit="cm" range="0,6-1,2" />
             <Item label="Mișcare paradoxală SIV" value={f.miscare_paradoxala_siv} />
-            <Item label="DTDVS" value={f.dtdvs} unit="cm" ref="3,7-5,6" />
-            <Item label="DTSVS" value={f.dtsvs} unit="cm" ref="2,7-3,7" />
-            <Item label="PPVS" value={f.ppvs} unit="cm" ref="0,6-1,2" />
-            <Item label="FS" value={f.fs} unit="%" ref="25-45" />
+            <Item label="DTDVS" value={f.dtdvs} unit="cm" range="3,7-5,6" />
+            <Item label="DTSVS" value={f.dtsvs} unit="cm" range="2,7-3,7" />
+            <Item label="PPVS" value={f.ppvs} unit="cm" range="0,6-1,2" />
+            <Item label="FS" value={f.fs} unit="%" range="25-45" />
             <Item label="FE Teichholtz" value={f.fe_teichholtz} unit="%" />
             <Item label="Aspect v. mitrală" value={f.aspect_v_mitrala} />
           </Grid>
@@ -91,8 +91,8 @@ export default async function PrintPage({ params }: { params: { id: string } }) 
             <Item label="Apical 2C — VTD" value={f.apical_2c_vtd} unit="ml" />
             <Item label="Apical 2C — VTS" value={f.apical_2c_vts} unit="ml" />
             <Item label="Apical 2C — FE" value={f.apical_2c_fe} unit="%" />
-            <Item label="Volum AS" value={f.volum_as} unit="ml" ref="20-55" />
-            <Item label="Suprafață AS" value={f.supraf_as} unit="cm²" ref="<20" />
+            <Item label="Volum AS" value={f.volum_as} unit="ml" range="20-55" />
+            <Item label="Suprafață AS" value={f.supraf_as} unit="cm²" range="<20" />
             <Item label="Funcție diastolică" value={f.functie_diastolica} />
           </Grid>
         </Section>
@@ -279,12 +279,12 @@ function Item({
   label,
   value,
   unit,
-  ref,
+  range,
 }: {
   label: string;
   value: V;
   unit?: string;
-  ref?: string;
+  range?: string;
 }) {
   return (
     <div className="item">
@@ -292,7 +292,7 @@ function Item({
       <span className="item-value">
         {v(value)}
         {unit && <span className="item-unit"> {unit}</span>}
-        {ref && <span className="item-ref"> ({ref})</span>}
+        {range && <span className="item-ref"> ({range})</span>}
       </span>
     </div>
   );
