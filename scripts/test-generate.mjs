@@ -28,6 +28,7 @@ doc.render({
   recomandari: "Control la 12 luni",
   tratament: "Continuă tratamentul actual",
   medic_examinator: "Dr. Goje Iacob Daniel\nmedic specialist medicină internă și cardiologie",
+  cinetica_detalii: "Hipokinezie segment apical anterior.",
 });
 const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
 await fs.writeFile("/tmp/test-output.docx", out);

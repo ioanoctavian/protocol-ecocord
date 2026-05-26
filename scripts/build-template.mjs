@@ -80,14 +80,18 @@ const RULES = [
   { match: /^Pmed=\.+ mmHg$/, fields: ["sp_pmed"], onceOnly: "sp_pmed" },
   // Insuficienta pulm
   { match: /^\s+Severitate: \.+ ?,\s+PSAP=\.+ mmHg/, fields: ["ip_severitate", "psap"] },
-  // Cinetica detalii (two consecutive dot-only runs)
-  { match: /^\.{50,}$/, fields: ["cinetica_detalii"], onceOnly: "cinetica_detalii" },
+  // Cinetica detalii — original has TWO consecutive dot-only lines, each ~177
+  // dots, where the doctor wrote about parietal kinetics anomalies. We map the
+  // first to {cinetica_detalii} and clear the second so multi-line content
+  // (rendered with linebreaks: true) doesn't get tangled with leftover dots.
+  { match: /^\.{100,300}$/, fields: ["cinetica_detalii"], onceOnly: "cinetica_detalii" },
+  { match: /^\.{100,300}$/, clear: true, onceOnly: "cinetica_detalii_2" },
   // GLS
   { match: /GLS = \.+%/, fields: ["gls"] },
   // Lichid pericardic detalii
   { match: /^  \.+\s*$/, fields: ["lichid_pericardic_detalii"], onceOnly: "lichid_pericardic_detalii" },
-  // Concluzii (very long dot run)
-  { match: /^\.{100,}$/, fields: ["concluzii"], onceOnly: "concluzii" },
+  // Concluzii — single very long dot run (~874 dots) after "Concluzii:" label.
+  { match: /^\.{500,}$/, fields: ["concluzii"], onceOnly: "concluzii" },
 ];
 
 // Labels that have no dot placeholder — append a {placeholder} immediately after the colon.
@@ -139,6 +143,11 @@ async function main() {
     for (const rule of RULES) {
       if (rule.onceOnly && used.has(rule.onceOnly)) continue;
       if (rule.match.test(text)) {
+        if (rule.clear) {
+          if (rule.onceOnly) used.add(rule.onceOnly);
+          report.push(`✓ (cleared ${rule.onceOnly})`);
+          return `<w:t${attrs}>${encodeXml(text.replace(DOTS, ""))}</w:t>`;
+        }
         const out = applyRule(text, rule.fields);
         if (out !== text) {
           if (rule.onceOnly) used.add(rule.onceOnly);
