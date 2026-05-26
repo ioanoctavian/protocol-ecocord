@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { SECTIONS, emptyFormValues, type Field, type FormValues } from "@/lib/fields";
 
 function FieldInput({
@@ -81,11 +82,22 @@ function FieldLabel({ field }: { field: Field }) {
   );
 }
 
-export default function EcoForm() {
-  const [values, setValues] = useState<FormValues>(emptyFormValues());
+export default function EcoForm({
+  initial,
+}: {
+  initial: { id: string; values: FormValues } | null;
+}) {
+  const router = useRouter();
+  const [values, setValues] = useState<FormValues>(() => {
+    if (!initial) return emptyFormValues();
+    // Merge stored values onto defaults so any new fields (e.g. medic_titlu)
+    // added after the record was saved still pick up their defaults.
+    return { ...emptyFormValues(), ...initial.values };
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
+  const editId = initial?.id ?? null;
 
   function update(name: string, v: string | number | boolean) {
     setValues((prev) => ({ ...prev, [name]: v }));
@@ -97,16 +109,17 @@ export default function EcoForm() {
     setError(null);
     setDone(null);
     try {
-      const res = await fetch("/api/generate", {
+      const url = editId ? `/api/generate?id=${encodeURIComponent(editId)}` : "/api/generate";
+      const res = await fetch(url, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
       });
       if (!res.ok) throw new Error((await res.text()) || "Eroare la generare");
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
+      const objectUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
+      a.href = objectUrl;
       const safe =
         ((values.nume_prenume as string) || "pacient")
           .trim()
@@ -116,8 +129,9 @@ export default function EcoForm() {
       document.body.appendChild(a);
       a.click();
       a.remove();
-      URL.revokeObjectURL(url);
-      setDone("Document generat și salvat.");
+      URL.revokeObjectURL(objectUrl);
+      setDone(editId ? "Înregistrare actualizată." : "Document generat și salvat.");
+      if (editId) router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Eroare necunoscută");
     } finally {
@@ -162,18 +176,18 @@ export default function EcoForm() {
             {done && <span className="text-emerald-700">{done}</span>}
             {!error && !done && (
               <span className="text-slate-500 hidden md:inline">
-                Toate câmpurile sunt opționale — completează ce ai măsurat.
+                {editId ? "Modifici o examinare existentă." : "Toate câmpurile sunt opționale — completează ce ai măsurat."}
               </span>
             )}
           </div>
           <button type="submit" disabled={submitting} className="btn-accent">
             {submitting ? (
               <>
-                <Spinner /> Se generează...
+                <Spinner /> {editId ? "Se actualizează..." : "Se generează..."}
               </>
             ) : (
               <>
-                <DownloadIcon /> Salvează și descarcă Word
+                <DownloadIcon /> {editId ? "Salvează modificările și descarcă" : "Salvează și descarcă Word"}
               </>
             )}
           </button>

@@ -12,6 +12,9 @@ export async function POST(req: Request) {
   } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Neautentificat", { status: 401 });
 
+  const url = new URL(req.url);
+  const editId = url.searchParams.get("id");
+
   let payload: FormValues;
   try {
     payload = (await req.json()) as FormValues;
@@ -19,23 +22,33 @@ export async function POST(req: Request) {
     return new NextResponse("Body invalid", { status: 400 });
   }
 
-  // Whitelist known fields so a malicious client can't write arbitrary columns.
   const clean: FormValues = {};
   const known = new Set(ALL_FIELDS.map((f) => f.name));
   for (const k of Object.keys(payload)) {
     if (known.has(k)) clean[k] = payload[k];
   }
 
-  const { error: insertErr } = await supabase
-    .from("examinations")
-    .insert({
-      user_id: user.id,
-      patient_name: (clean.nume_prenume as string) || null,
-      examined_at: (clean.data_examinarii as string) || null,
-      data: clean,
-    });
-  if (insertErr) {
-    return new NextResponse(`Eroare la salvare: ${insertErr.message}`, { status: 500 });
+  const row = {
+    patient_name: (clean.nume_prenume as string) || null,
+    examined_at: (clean.data_examinarii as string) || null,
+    data: clean,
+  };
+
+  if (editId) {
+    const { error } = await supabase
+      .from("examinations")
+      .update(row)
+      .eq("id", editId);
+    if (error) {
+      return new NextResponse(`Eroare la actualizare: ${error.message}`, { status: 500 });
+    }
+  } else {
+    const { error } = await supabase
+      .from("examinations")
+      .insert({ user_id: user.id, ...row });
+    if (error) {
+      return new NextResponse(`Eroare la salvare: ${error.message}`, { status: 500 });
+    }
   }
 
   const buf = await buildDocx(clean);
