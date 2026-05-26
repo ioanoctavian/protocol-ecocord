@@ -1,222 +1,31 @@
-/* Print layout — clean, A4-friendly, browser print → Save as PDF */
+/* Print page — renders the original .docx via docx-preview and prints. */
 
-/* The /print pages share the global layout with the app, but we want a clean
-   white background and no gradient when viewing or printing. */
 body {
-  background: white !important;
+  background: #f1f5f9 !important;
   background-image: none !important;
   min-height: 0 !important;
   color: #0f172a !important;
-}
-
-.page {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 24px 32px 40px;
-  background: white;
-  color: #0f172a;
-  font: 13px/1.45 ui-sans-serif, system-ui, -apple-system, "Inter", sans-serif;
-}
-
-.title {
-  font-size: 22px;
-  font-weight: 700;
-  text-align: center;
-  letter-spacing: 0.02em;
-  margin: 0 0 18px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #0f172a;
-}
-
-.patient {
-  display: grid;
-  grid-template-columns: 1.5fr 2fr 1fr 1fr;
-  gap: 8px 18px;
-  margin-bottom: 10px;
-  padding: 8px 12px;
-  background: #f8fafc;
-  border-radius: 8px;
-  font-size: 13px;
-}
-
-.meta-row {
-  display: flex;
-  gap: 24px;
-  margin-bottom: 16px;
-  padding: 0 4px;
-  font-size: 13px;
-}
-
-.section {
-  margin-bottom: 14px;
-  break-inside: avoid;
-}
-
-.section-title {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0 0 8px;
-  padding: 4px 0 4px 8px;
-  border-left: 3px solid #0ea5e9;
-  color: #0f172a;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 4px 18px;
-  padding: 0 8px;
-}
-
-.item {
-  display: flex;
-  gap: 6px;
-  font-size: 12px;
-  padding: 2px 0;
-  border-bottom: 1px dotted #e2e8f0;
-}
-
-.item-label {
-  font-weight: 600;
-  color: #334155;
-  flex-shrink: 0;
-}
-
-.item-value {
-  color: #0f172a;
-}
-
-.item-unit {
-  color: #64748b;
-}
-
-.item-ref {
-  color: #94a3b8;
-  font-size: 11px;
-}
-
-.detail {
-  font-size: 12px;
-  padding: 4px 8px;
-  margin-top: 4px;
-  background: #f8fafc;
-  border-radius: 4px;
-}
-
-.detail-label {
-  font-weight: 600;
-  color: #334155;
-}
-
-.severity-row {
-  font-size: 12px;
-  padding: 4px 8px;
-  margin-top: 6px;
-  background: #f8fafc;
-  border-radius: 4px;
-}
-
-.severity-label {
-  font-weight: 600;
-  color: #334155;
-}
-
-.severity-marker.yes {
-  font-weight: 600;
-  color: #b91c1c;
-}
-
-.severity-marker.no {
-  color: #64748b;
-}
-
-.severity-extras {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  margin-top: 2px;
-  padding-left: 16px;
-  color: #475569;
-}
-
-.block {
-  margin: 16px 0;
-  break-inside: avoid;
-}
-
-.block-title {
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin: 0 0 6px;
-  padding-bottom: 4px;
-  border-bottom: 1px solid #cbd5e1;
-}
-
-.block-body {
-  font-size: 13px;
   margin: 0;
-  white-space: pre-wrap;
-  line-height: 1.55;
 }
 
-.bullet-list {
-  margin: 0;
-  padding-left: 20px;
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.bullet-list li {
-  margin-bottom: 2px;
-}
-
-.medic {
-  margin-top: 32px;
-  padding-top: 16px;
-  border-top: 1px solid #cbd5e1;
-  text-align: center;
-  break-inside: avoid;
-}
-
-.medic-name {
-  font-weight: 700;
-  font-size: 13px;
-}
-
-.medic-titlu {
-  font-weight: 600;
-  font-size: 12px;
-  margin-top: 4px;
-}
-
-/* Top toolbar shown only on screen — hidden when printing */
 .print-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
   background: white;
   border-bottom: 1px solid #e2e8f0;
-  padding: 12px 32px;
+  padding: 12px 24px;
   display: flex;
   gap: 12px;
   align-items: center;
-  max-width: 800px;
-  margin: 0 auto 8px;
-  flex-wrap: wrap;
-}
-
-.print-hint {
-  font-size: 12px;
-  color: #64748b;
-  margin-left: auto;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
 .print-btn {
   background: linear-gradient(to bottom, #0ea5e9, #0284c7);
   color: white;
   border: none;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 8px;
   font-size: 13px;
   font-weight: 600;
@@ -224,8 +33,13 @@ body {
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.print-btn:hover {
+.print-btn:hover:not(:disabled) {
   filter: brightness(1.05);
+}
+
+.print-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .print-link {
@@ -238,6 +52,38 @@ body {
   text-decoration: underline;
 }
 
+.print-hint {
+  font-size: 12px;
+  color: #64748b;
+  margin-left: auto;
+}
+
+.print-error {
+  font-size: 12px;
+  color: #b91c1c;
+  margin-left: auto;
+}
+
+.docx-frame {
+  padding: 24px 0 48px;
+  display: flex;
+  justify-content: center;
+}
+
+.docx-container {
+  max-width: 100%;
+}
+
+/* docx-preview renders each page in a div.docx-page with inline page
+   dimensions and box-shadow for the "paper" effect. */
+.docx-container .docx-wrapper > section.docx,
+.docx-container > section.docx {
+  background: white;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.1), 0 1px 3px rgba(15, 23, 42, 0.05);
+  margin: 0 auto 24px;
+  border-radius: 4px;
+}
+
 @media print {
   html, body {
     background: white !important;
@@ -247,20 +93,23 @@ body {
     padding: 0 !important;
   }
   .print-toolbar { display: none !important; }
-  .page {
+  .docx-frame {
     padding: 0 !important;
-    max-width: none !important;
-    margin: 0 !important;
-    font-size: 11px;
-    color: #0f172a !important;
-    background: white !important;
+    display: block !important;
   }
-  .section { margin-bottom: 8px; }
-  .grid { gap: 2px 16px; }
-  .title { color: #0f172a !important; }
-  .section-title, .block-title { color: #0f172a !important; }
+  .docx-container .docx-wrapper > section.docx,
+  .docx-container > section.docx {
+    box-shadow: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    break-after: page;
+  }
+  .docx-container .docx-wrapper > section.docx:last-child,
+  .docx-container > section.docx:last-child {
+    break-after: auto;
+  }
   @page {
     size: A4;
-    margin: 14mm 16mm;
+    margin: 0;
   }
 }
