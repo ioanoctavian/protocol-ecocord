@@ -9,6 +9,7 @@ export interface Field {
   options?: string[];
   placeholder?: string;
   rows?: number;
+  defaultValue?: string | number | boolean;
 }
 
 export interface Section {
@@ -175,7 +176,18 @@ export const SECTIONS: Section[] = [
       { name: "diagnostice", label: "Diagnostice", type: "textarea", rows: 4 },
       { name: "recomandari", label: "Recomandări", type: "textarea", rows: 3 },
       { name: "tratament", label: "Tratament", type: "textarea", rows: 3 },
-      { name: "medic_examinator", label: "Medic examinator", type: "text" },
+      {
+        name: "medic_examinator",
+        label: "Medic examinator",
+        type: "text",
+        defaultValue: "Dr. Goje Iacob Daniel",
+      },
+      {
+        name: "medic_titlu",
+        label: "Titlu medic",
+        type: "text",
+        defaultValue: "medic specialist medicină internă și cardiologie",
+      },
     ],
   },
 ];
@@ -187,7 +199,11 @@ export type FormValues = Record<string, string | number | boolean | null>;
 export function emptyFormValues(): FormValues {
   const v: FormValues = {};
   for (const f of ALL_FIELDS) {
-    v[f.name] = f.type === "checkbox" ? false : "";
+    if (f.defaultValue !== undefined) {
+      v[f.name] = f.defaultValue;
+    } else {
+      v[f.name] = f.type === "checkbox" ? false : "";
+    }
   }
   return v;
 }

@@ -50,6 +50,13 @@ function render(v: FormValues): Record<string, string> {
   // Not used by template currently; kept here so the renderer remains a single
   // source of truth if a summary placeholder is added later.
   void choiceSummary;
+
+  // Stack medic title below the doctor's name on its own line.
+  // docxtemplater's `linebreaks: true` turns "\n" into a Word line break.
+  const titlu = (v.medic_titlu as string) || "";
+  if (out.medic_examinator && out.medic_examinator !== BLANK && titlu) {
+    out.medic_examinator = `${out.medic_examinator}\n${titlu}`;
+  }
   return out;
 }
 

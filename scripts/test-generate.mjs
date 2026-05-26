@@ -27,7 +27,7 @@ doc.render({
   diagnostice: "Fără patologie semnificativă",
   recomandari: "Control la 12 luni",
   tratament: "Continuă tratamentul actual",
-  medic_examinator: "Dr. Popescu",
+  medic_examinator: "Dr. Goje Iacob Daniel\nmedic specialist medicină internă și cardiologie",
 });
 const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
 await fs.writeFile("/tmp/test-output.docx", out);
