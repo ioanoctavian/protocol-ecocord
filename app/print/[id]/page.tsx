@@ -42,14 +42,6 @@ export default async function PrintPage({ params }: { params: { id: string } }) 
   return (
     <>
       <PrintTrigger />
-      <div className="print-toolbar">
-        <button onClick={() => window.print()} className="print-btn">
-          Salvează ca PDF
-        </button>
-        <a href="/history" className="print-link">
-          ← Înapoi la istoric
-        </a>
-      </div>
 
       <main className="page">
         <h1 className="title">ECOCARDIOGRAFIE TRANSTORACICĂ</h1>

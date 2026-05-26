@@ -4,11 +4,20 @@ import { useEffect } from "react";
 
 export default function PrintTrigger() {
   useEffect(() => {
-    // Small delay so the document is fully laid out and fonts loaded.
     const t = setTimeout(() => {
       window.print();
     }, 300);
     return () => clearTimeout(t);
   }, []);
-  return null;
+
+  return (
+    <div className="print-toolbar">
+      <button onClick={() => window.print()} className="print-btn">
+        Salvează ca PDF
+      </button>
+      <a href="/history" className="print-link">
+        ← Înapoi la istoric
+      </a>
+    </div>
+  );
 }
