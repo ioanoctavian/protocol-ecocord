@@ -169,7 +169,30 @@ async function main() {
     return whole;
   });
 
-  zip.file(docXmlPath, newXml);
+  // Inject a new centered, bold paragraph below the "Medic examinator:" line
+  // for the doctor's title. Going through a fresh <w:p> (rather than a linebreak
+  // inside the existing run) sidesteps the trailing-whitespace alignment quirks
+  // of the original run.
+  const titluParagraph =
+    "<w:p>" +
+      "<w:pPr>" +
+        '<w:pStyle w:val="Normal"/>' +
+        '<w:jc w:val="center"/>' +
+        "<w:rPr></w:rPr>" +
+      "</w:pPr>" +
+      "<w:r>" +
+        "<w:rPr>" +
+          '<w:rFonts w:cs="Calibri" w:ascii="Calibri" w:hAnsi="Calibri"/>' +
+          "<w:b/>" +
+          '<w:lang w:val="ro-RO"/>' +
+        "</w:rPr>" +
+        "<w:t>{medic_titlu}</w:t>" +
+      "</w:r>" +
+    "</w:p>";
+  const finalXml = newXml.replace("<w:sectPr>", titluParagraph + "<w:sectPr>");
+  report.push("✓ medic_titlu (new centered paragraph)");
+
+  zip.file(docXmlPath, finalXml);
   await fs.mkdir(OUT_DIR, { recursive: true });
   await fs.writeFile(OUT, zip.generate({ type: "nodebuffer" }));
 

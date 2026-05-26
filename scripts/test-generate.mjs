@@ -27,8 +27,11 @@ doc.render({
   diagnostice: "Fără patologie semnificativă",
   recomandari: "Control la 12 luni",
   tratament: "Continuă tratamentul actual",
-  medic_examinator: "Dr. Goje Iacob Daniel\nmedic specialist medicină internă și cardiologie",
+  medic_examinator: "Dr. Goje Iacob Daniel",
+  medic_titlu: "Medic Specialist Medicină Internă și Cardiologie",
   cinetica_detalii: "Hipokinezie segment apical anterior.",
+  recomandari: "regim hiposodat\nactivitate fizica moderata\ncontrol la 6 luni",
+  tratament: "continua tratamentul actual",
 });
 const out = doc.getZip().generate({ type: "nodebuffer", compression: "DEFLATE" });
 await fs.writeFile("/tmp/test-output.docx", out);

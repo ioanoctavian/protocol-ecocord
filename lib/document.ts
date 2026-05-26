@@ -51,13 +51,31 @@ function render(v: FormValues): Record<string, string> {
   // source of truth if a summary placeholder is added later.
   void choiceSummary;
 
-  // Stack medic title below the doctor's name on its own line.
-  // docxtemplater's `linebreaks: true` turns "\n" into a Word line break.
-  const titlu = (v.medic_titlu as string) || "";
-  if (out.medic_examinator && out.medic_examinator !== BLANK && titlu) {
-    out.medic_examinator = `${out.medic_examinator}\n${titlu}`;
+  // Diagnostice / Recomandari / Tratament render as a new line below the label
+  // with each user-entered line prefixed by "- ". Empty values become "" so the
+  // label doesn't get followed by underscores.
+  for (const k of ["diagnostice", "recomandari", "tratament"]) {
+    if (!out[k] || out[k] === BLANK) {
+      out[k] = "";
+    } else {
+      out[k] = "\n" + bulletize(out[k]);
+    }
   }
+
+  // Medic title placeholder: render empty when unset so the centered paragraph
+  // is just blank rather than a row of underscores.
+  if (!out.medic_titlu || out.medic_titlu === BLANK) out.medic_titlu = "";
+
   return out;
+}
+
+function bulletize(value: string): string {
+  return value
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => `- ${line}`)
+    .join("\n");
 }
 
 export async function buildDocx(v: FormValues): Promise<Buffer> {
