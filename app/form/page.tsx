@@ -17,15 +17,20 @@ export default async function FormPage({
 
   let initial: { id: string; values: FormValues } | null = null;
   let patientName: string | null = null;
-  if (searchParams.edit) {
-    const { data } = await supabase
-      .from("examinations")
-      .select("id, patient_name, data")
-      .eq("id", searchParams.edit)
-      .single();
-    if (data) {
-      initial = { id: data.id, values: data.data as FormValues };
-      patientName = data.patient_name;
+  const editId = searchParams.edit;
+  if (editId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(editId)) {
+    try {
+      const { data } = await supabase
+        .from("examinations")
+        .select("id, patient_name, data")
+        .eq("id", editId)
+        .maybeSingle();
+      if (data && data.data && typeof data.data === "object") {
+        initial = { id: data.id, values: data.data as FormValues };
+        patientName = data.patient_name;
+      }
+    } catch (e) {
+      console.error("Failed to load examination for edit:", e);
     }
   }
 

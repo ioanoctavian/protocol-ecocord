@@ -12,13 +12,17 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
   } = await supabase.auth.getUser();
   if (!user) return new NextResponse("Neautentificat", { status: 401 });
 
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id)) {
+    return new NextResponse("Negăsit", { status: 404 });
+  }
+
   const { data, error } = await supabase
     .from("examinations")
     .select("data, patient_name")
     .eq("id", params.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) return new NextResponse("Negăsit", { status: 404 });
+  if (error || !data || !data.data) return new NextResponse("Negăsit", { status: 404 });
 
   const buf = await buildDocx(data.data as FormValues);
   const safe = ((data.patient_name as string) || "pacient")

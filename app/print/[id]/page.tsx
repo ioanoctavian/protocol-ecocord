@@ -29,15 +29,19 @@ export default async function PrintPage({ params }: { params: { id: string } }) 
   } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.id)) {
+    notFound();
+  }
+
   const { data, error } = await supabase
     .from("examinations")
     .select("data, patient_name, examined_at")
     .eq("id", params.id)
-    .single();
+    .maybeSingle();
 
-  if (error || !data) notFound();
+  if (error || !data || !data.data) notFound();
 
-  const f = data.data as FormValues;
+  const f = (data.data || {}) as FormValues;
 
   return (
     <>
