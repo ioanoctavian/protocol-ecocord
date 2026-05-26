@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import EcoForm from "./EcoForm";
-import Link from "next/link";
+import AppShell from "@/components/AppShell";
 
 export default async function FormPage() {
   const supabase = createClient();
@@ -11,22 +11,14 @@ export default async function FormPage() {
   if (!user) redirect("/login");
 
   return (
-    <main className="max-w-4xl mx-auto p-4 md:p-8 space-y-6">
-      <header className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold">Ecocardiografie transtoracică</h1>
-          <p className="text-sm text-slate-600">Conectat ca {user.email}</p>
-        </div>
-        <nav className="flex items-center gap-3 text-sm">
-          <Link href="/history" className="text-slate-700 hover:underline">
-            Istoric
-          </Link>
-          <form action="/auth/signout" method="post">
-            <button className="text-slate-700 hover:underline">Deconectare</button>
-          </form>
-        </nav>
-      </header>
-      <EcoForm />
-    </main>
+    <AppShell userEmail={user.email ?? ""} active="form">
+      <div className="max-w-5xl mx-auto px-4 md:px-8 pt-8 pb-32">
+        <header className="mb-8">
+          <h1 className="text-3xl font-semibold tracking-tight">Ecocardiografie transtoracică</h1>
+          <p className="text-slate-500 mt-1">Completează măsurătorile — generăm documentul Word identic cu protocolul.</p>
+        </header>
+        <EcoForm />
+      </div>
+    </AppShell>
   );
 }
